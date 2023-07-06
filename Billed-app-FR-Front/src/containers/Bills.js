@@ -29,7 +29,7 @@ export default class {
     const imgWidth = Math.floor($('#modaleFile').width() * 0.5);
     const fileExtension = extractFileExtension(billUrl);
 
-    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill ${fileExtension.toUpperCase()}" /></div>`);
+    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill ${fileExtension.toUpperCase()}" data-testid="image"/></div>`);
     $('#modaleFile').modal('show');
   }
 
