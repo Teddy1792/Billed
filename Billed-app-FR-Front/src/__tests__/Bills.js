@@ -14,7 +14,8 @@
  import {extractFileExtension} from "../containers/bills.js"
  import router from "../app/Router.js";
  import BillsPage from "../containers/bills.js";
- import { mockedBills } from "../__mocks__/store.js";
+ import  mockedStore  from "../__mocks__/store.js";
+ import { formatDate, formatStatus } from "../app/format.js";
 
 
 
@@ -94,46 +95,91 @@
   })
  })
 
- // test d'intégration getBills
 describe("When I am on bills page", () => {
   test("then the website fetches the bills from mock API GET", async () => {
-    document.body.innerHTML = new BillsPage({ data: bills });
-    const mockStore = {
-      bills: () => ({
-        list: jest.fn().mockResolvedValue({ data: mockedBills }),
-      }),
-    };
-
-    const result = await getBills.call({ store: mockStore }); // Call getBills directly
-
-    // Assertions
-    expect(mockStore.bills().list).toHaveBeenCalled();
-    expect(result).toEqual(mockedBills);
-  });
-});
-
-describe("When I am on bills page", () => {
-  test("then the website fetches the bills from mock API GET", async () => {
-    // Arrange
-    const mockOnNavigate = ROUTES;
-    const mockGetBills = jest.fn().mockResolvedValue(bills);
-    const mockDocument = mockGetBills;
-
-    // Instantiate the default class with required dependencies
-    const billsPage = BillsPage({
-      document: document.body.innerHTML = new BillsPage({ data: bills }),
-      onNavigate: mockOnNavigate,
-      getBills: jest.fn().mockResolvedValue(bills),
+    //first we mock the environment
+    const bills = new Bills({
+      document,
+      onNavigate,
+      store: mockedStore,
+      localStorage: window.localStorage,
     });
 
-    // Act
-    const result = await billsPage.getBills();
+    //then we get the bills
+    const result = await bills.getBills()
+    const mockListResult = await mockedStore.bills().list()
 
-    // Assert
-    expect(mockGetBills).toHaveBeenCalled();
-    expect(result).toEqual(/* expected bills */);
-  });
-});
+    //expecting result.length (the bills we fetched) to be the length of the mocked list
+    expect(result.length).toEqual(mockListResult.length)
+    result.forEach((doc, i) => {
+      expect(doc.date).toEqual(formatDate(mockListResult[i].date))
+    })
+  })
+
+  //create another test without a store, in order to check whether or not the test pass with undefined
+  test("then getBill catches error when passed an undefined store", async () => {
+    //first we mock the environment
+    const bills = new Bills({
+      document,
+      onNavigate,
+      store: undefined,
+      localStorage: window.localStorage,
+    });
+
+    //then we get the bills
+    const result = await bills.getBills()
+    const mockListResult = await mockedStore.bills().list()
+
+    //expecting result.length (the bills we fetched) to be the length of the mocked list
+    expect(result.length).toEqual(mockListResult.length)
+    result.forEach((doc, i) => {
+      expect(doc.date).toEqual(formatDate(mockListResult[i].date))
+    })
+  })
+
+  test("then the website catches errors", async () => {
+    const mockedBills = mockedStore.bills();
+  
+    // Mock a corrupted document
+    const corruptedDoc = {
+      // Provide a date value that will cause an error in the formatDate function
+      date: "Invalid Date",
+      status: "pending"
+    };
+  
+    // Mock the list() function to return the corrupted document
+    mockedBills.list = jest.fn().mockResolvedValueOnce([corruptedDoc]);
+  
+    const bills = new Bills({
+      document,
+      onNavigate,
+      store: mockedStore,
+      localStorage: window.localStorage,
+    });
+  
+    // Mock the console.log function to capture the logged error
+    console.log = jest.fn()
+  
+    // Call the getBills function
+    const result = await bills.getBills()
+  
+    // Expect the result to be an array with a length of 1 (the corrupted document)
+    expect(result).toHaveLength(1)
+  
+    // Expect the result to have the same properties as the corrupted document,
+    // but with the original unformatted date and formatted status
+    expect(result[0]).toEqual({
+      ...corruptedDoc,
+      date: corruptedDoc.date,
+      status: formatStatus(corruptedDoc.status)
+    })
+  
+    // Verify that the error was logged to the console with the correct parameters
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error), "for", corruptedDoc);
+  })
+})
+
+
 
 
 
