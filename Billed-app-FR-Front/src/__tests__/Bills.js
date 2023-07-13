@@ -117,7 +117,7 @@ describe("When I am on bills page", () => {
   })
 
   //create another test without a store, in order to check whether or not the test pass with undefined
-  test("then getBill catches error when passed an undefined store", async () => {
+  test("then getBill function fails when passed an undefined store", async () => {
     //first we mock the environment
     const bills = new Bills({
       document,
@@ -125,16 +125,11 @@ describe("When I am on bills page", () => {
       store: undefined,
       localStorage: window.localStorage,
     });
-
     //then we get the bills
     const result = await bills.getBills()
     const mockListResult = await mockedStore.bills().list()
-
-    //expecting result.length (the bills we fetched) to be the length of the mocked list
-    expect(result.length).toEqual(mockListResult.length)
-    result.forEach((doc, i) => {
-      expect(doc.date).toEqual(formatDate(mockListResult[i].date))
-    })
+    //expecting result to be undefined
+    expect(result).toEqual(undefined)
   })
 
   test("then the website catches errors", async () => {
