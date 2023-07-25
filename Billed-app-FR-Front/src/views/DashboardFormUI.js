@@ -22,6 +22,7 @@ export const modal = () => (`
   `)
 
 export default (bill) => {
+  const fileNameText = bill.fileName !== 'null' ? bill.fileName : 'Aucun justificatif trouvé';
 
   return (`
     <div class="container dashboard-form" data-testid="dashboard-form">
@@ -68,7 +69,7 @@ export default (bill) => {
         <div class="col-sm">
           <label for="file" class="bold-label">Justificatif</label>
             <div class='input-field input-flex file-flex'>
-            <span id="file-name-admin">${bill.fileName}</span>
+            <span id="file-name-admin">${fileNameText}</span>
             <div class='icons-container'>
               <span id="icon-eye-d" data-testid="icon-eye-d" data-bill-url="${bill.fileUrl}"> ${eyeWhite} </span>
             </div>

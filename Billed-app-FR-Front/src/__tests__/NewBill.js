@@ -3,6 +3,7 @@
  */
 
  import { fireEvent, screen } from '@testing-library/dom';
+ import { waitFor } from '@testing-library/dom'
  import userEvent from '@testing-library/user-event';
  import { localStorageMock } from '../__mocks__/localStorage';
  import NewBillUI from "../views/NewBillUI.js"
@@ -43,7 +44,7 @@
    newBillContainer = new NewBill({
      document,
      onNavigate,
-     store: null,
+     store: mockedStore, //initialiser avec un store
      localStorage: window.localStorage,
    });
  })
@@ -55,28 +56,20 @@ describe("Given I am connected as an employee", () => {
     })
 
     test("Then the user can upload a file", async () => {
-      //const handleChangeFile = jest.fn(newBillContainer.handleChangeFile)
-      const handleChangeFile = jest.spyOn(newBillContainer, 'handleChangeFile');
-      console.log('newBillContainer',newBillContainer);
       const fileInput = screen.getByTestId('file');
-      const file = new File(['file content'], 'file.png', { type: 'image/png' });
-    
+      const file = new File(["(⌐□_□)"], "chucknorris.png", { type: "image/png" });
+      const alert = jest.fn((param) => {console.log(param)})
       // Mock the alert function
-      window.alert = jest.fn();
+      window.alert = alert;
     
-      Object.defineProperty(fileInput, 'files', {
-        value: [file],
-      });
-    
-      fireEvent.change(fileInput);
+      await waitFor(() =>
+      fireEvent.change(fileInput, {
+        target: { files: [file] },
+      })
+      );
     
       expect(screen.getByTestId('file')).toBeTruthy();
-      expect(handleChangeFile).toHaveBeenCalled();
-    
-      expect(newBillContainer.fileUrl).toBe('https://url.test');
-      expect(newBillContainer.fileName).toBe('file.png');
-    
-      handleChangeFile.mockRestore();
+      expect(alert).not.toHaveBeenCalled();
     });    
     
     

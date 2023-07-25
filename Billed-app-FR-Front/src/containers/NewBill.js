@@ -20,14 +20,13 @@ export default class NewBill {
     e.preventDefault();
     const fileInput = this.document.querySelector(`input[data-testid="file"]`);
     const file = fileInput.files[0];
-    const filePath = e.target.value.split(/\\/g);
-    const fileName = filePath[filePath.length - 1];
+    const fileName = file.name;
     
     // File type validation
     const allowedExtensions = ['jpg', 'jpeg', 'png'];
     const fileExtension = fileName.split('.').pop().toLowerCase();
     const btnValidation = this.document.getElementById('btn-send-bill');
-  
+    console.log('file',file);
     if (!allowedExtensions.includes(fileExtension)) {
       fileInput.value = ''; // Clear the file input
       btnValidation.disabled = true; // Disable the submit button
@@ -49,14 +48,13 @@ export default class NewBill {
         }
       })
       .then(({ fileUrl, key }) => {
-        console.log(fileUrl);
+        console.log('filrURL:', fileUrl);
         this.billId = key;
         this.fileUrl = fileUrl;
         this.fileName = fileName;
         btnValidation.disabled = false; // Enable the submit button after successful file selection
-              // Display the file name in the modal
-      const fileNameElement = this.document.getElementById('file-name');
-      fileNameElement.textContent = fileName;
+              // Display the file name in the modal.. how to do that? directly in Bill.js I guess
+
       })
       .catch(error => console.error(error));
   }

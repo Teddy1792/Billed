@@ -28,10 +28,18 @@ export default class {
     const billUrl = icon.getAttribute("data-bill-url");
     const imgWidth = Math.floor($('#modaleFile').width() * 0.5);
     const fileExtension = extractFileExtension(billUrl);
-
-    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill ${fileExtension.toUpperCase()}" data-testid="image"/></div>`);
+  
+    let altText = fileExtension.toUpperCase();
+  
+    //check whether or not fileExtension ends with "null" and modify the alt-text accordingly
+    if (fileExtension.toLowerCase().endsWith("null")) {
+      altText = "Aucun justificatif uploadé";
+    }
+  
+    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="${altText}" data-testid="image"/></div>`);
     $('#modaleFile').modal('show');
   }
+  
 
   getBills = () => {
     if (this.store) {
