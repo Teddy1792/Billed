@@ -48,13 +48,12 @@ export default class NewBill {
         }
       })
       .then(({ fileUrl, key }) => {
-        console.log('filrURL:', fileUrl);
+        console.log('fileURL:', fileUrl);
         this.billId = key;
         this.fileUrl = fileUrl;
         this.fileName = fileName;
         btnValidation.disabled = false; // Enable the submit button after successful file selection
-              // Display the file name in the modal.. how to do that? directly in Bill.js I guess
-
+              // Display the file name in the modal
       })
       .catch(error => console.error(error));
   }

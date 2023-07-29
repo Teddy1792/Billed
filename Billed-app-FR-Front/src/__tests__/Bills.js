@@ -13,7 +13,6 @@
  import Bills from '../containers/Bills';
  import {extractFileExtension} from "../containers/bills.js"
  import router from "../app/Router.js";
- import BillsPage from "../containers/bills.js";
  import  mockedStore  from "../__mocks__/store.js";
  import { formatDate, formatStatus } from "../app/format.js";
 
@@ -76,6 +75,25 @@
       expect(handleClickIconEye).toHaveBeenCalled()
       expect(document.body.classList.contains('modal-open')).toBeTruthy()
     })
+
+    test("then the website checks for missing images", () =>{
+      const billsContainer = new Bills({
+        document, onNavigate, firestore: null, localStorage: window.localStorage
+      })
+      //mock a click function
+      const handleClickIconEye = jest.fn(billsContainer.handleClickIconEye)
+      const icon = document.createElement('div');
+      icon.setAttribute('data-testid', 'icon-eye');
+      icon.setAttribute('data-bill-url', 'http://localhost:5678/null');
+      icon.addEventListener('click', () => handleClickIconEye(icon))
+      userEvent.click(icon)
+      const imageWithSrcAndAlt = screen.getByAltText(/Aucun justificatif uploadé/i, {
+        src: 'http://localhost:5678/null',
+      });
+      expect(imageWithSrcAndAlt).toBeInTheDocument();
+      expect(handleClickIconEye).toHaveBeenCalled()
+    })
+
   });
 
   describe("When I click on the New bill button", () => {
