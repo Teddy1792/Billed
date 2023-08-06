@@ -56,10 +56,6 @@
     });
   })
 
-  //test d'intégration = test une fonctionnalité (donc des comportements dans l'interface, directement dans l'interface, si je click ici ou là)
-  //un test unitaire va tester une seule fonction (avec x ou y paramètre)
-  //un test unitaire sur bills : il faut instancier bills avec store ou sans store par exemple
-
   describe("When I click on the icon eye of a bill", () => {
     test("Then a modal should open", () => {
       //charge the UI

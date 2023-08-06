@@ -99,7 +99,7 @@ describe("Given I am connected as an employee", () => {
   })
 
   describe("When I submit new bill form", () => {
-    test("it works if all fields are filled properly", () => {
+    test("the bill is uploaded if all fields are filled properly", () => {
     // Mock form input values
     const expenseTypeSelect = screen.getByTestId('expense-type')
     const expenseNameInput = screen.getByTestId('expense-name')
